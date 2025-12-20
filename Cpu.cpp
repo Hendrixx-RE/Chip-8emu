@@ -1,11 +1,11 @@
-#include <cstdint>
+#include "Cpu.hpp"
 
-class Cpu {
-public:
-  uint8_t Memory[4096];
-  uint8_t Registers[16];
-  uint16_t IndexRegister, ProgramCounter, StackPointer;
-  uint8_t OpStack[16];
-  uint8_t DelayTimer;
-  uint8_t OperationCode;
-};
+Cpu::Cpu() : Memory(4096), Registers(16), Opstack(16), ProgramCounter(0x200) {};
+
+uint16_t Cpu::RandomNumGen() {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<uint8_t> distr(0, 255);
+  uint8_t randomByte = distr(gen);
+  return randomByte;
+}
