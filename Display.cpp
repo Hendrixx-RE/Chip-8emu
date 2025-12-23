@@ -22,9 +22,4 @@ UI::UI()
           0xF0, 0x80, 0xF0, 0x80, 0x80  // F
       }) {};
 
-void UI::LoadCharacters(Cpu &c) {
-  int iterator = 0x50;
-  for (auto it : CharacterSet) {
-    c.Memory[iterator] = it;
-  }
-}
+void UI::Op_0E00() { Display.clear(); }
