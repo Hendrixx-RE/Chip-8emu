@@ -1,8 +1,6 @@
 #include "Files.hpp"
+#include "Constants.hpp"
 #include <fstream>
-#include <vector>
-
-FileManagement::FileManagement() : START_ADDRESS(0x200) {};
 
 void FileManagement::LoadRom(std::string file, Cpu &c) {
   std::ifstream filestream(file, std::ios::binary | std::ios::ate);
