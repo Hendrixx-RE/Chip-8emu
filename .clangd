@@ -1,0 +1,6 @@
+CompileFlags:
+  Add: [
+    "-std=c++20",
+    "-fconstexpr-steps=5000000",
+    "-fconstexpr-depth=1000"
+  ]
