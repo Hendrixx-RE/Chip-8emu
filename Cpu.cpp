@@ -1,5 +1,6 @@
 #include "Cpu.hpp"
 #include "Constants.hpp"
+#include <fstream>
 #include <iostream>
 #include <random>
 
@@ -23,10 +24,14 @@ Cpu::Cpu()
           0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
           0xF0, 0x80, 0xF0, 0x80, 0x80  // F
       }),
-      Display(HEIGHT, std::vector<uint32_t>(WIDTH)),
+      Display(HEIGHT, std::vector<uint32_t>(WIDTH, 0x00000000)),
       ProgramCounter(START_ADDRESS), StackPointer(0), OperationCode(0) {};
 
-void Cpu::Op_00E0() { Display.clear(); }
+void Cpu::Op_00E0() {
+  for (auto &row : Display) {
+    std::fill(row.begin(), row.end(), 0x00000000);
+  }
+}
 
 void Cpu::Op_DXYN() {
   uint8_t index1 = (OperationCode & 0x0F00) >> 8u;
@@ -40,7 +45,8 @@ void Cpu::Op_DXYN() {
     uint8_t spriteByte = Memory[IndexCounter + row];
     for (unsigned int col = 0; col < 8; ++col) {
       uint8_t spritePixel = spriteByte & (0x80 >> col);
-      uint32_t &screenPixel = Display[Posy + row][Posx + col];
+      uint32_t &screenPixel =
+          Display[(Posy + row) % HEIGHT][(Posx + col) % WIDTH];
       if (spritePixel) {
         if (screenPixel == 0xFFFFFFFF) {
           Register[0xF] = 1;
@@ -187,12 +193,12 @@ void Cpu::Op_9XY0() {
 }
 
 void Cpu::Op_ANNN() {
-  uint16_t location = (OperationCode & 0x0FFF) >> 8u;
+  uint16_t location = (OperationCode & 0x0FFFu);
   IndexCounter = location;
 }
 
 void Cpu::Op_BNNN() {
-  uint16_t location = (OperationCode & 0x0FFF) >> 8u;
+  uint16_t location = (OperationCode & 0x0FFFu);
   ProgramCounter = Register[0] + location;
 }
 
@@ -274,6 +280,12 @@ void Cpu::Op_FX1E() {
   IndexCounter += Register[index1];
 }
 
+void Cpu::Op_FX29() {
+  uint8_t character = Register[(OperationCode & 0x0F00) >> 8u];
+  IndexCounter =
+      0x50 + (character * 5); // 0x50 is your font start, each char is 5 bytes
+}
+
 void Cpu::Op_FX33() {
   uint8_t num = Register[(OperationCode & 0x0F00) >> 8u];
   Memory[IndexCounter] = (num - (num % 100)) / 100;
@@ -282,23 +294,22 @@ void Cpu::Op_FX33() {
 }
 
 void Cpu::Op_FX55() {
-  uint8_t index1 = (OperationCode & 0x0F00) >> 8u;
-  for (uint16_t i = IndexCounter; i <= IndexCounter + index1; ++i) {
-    Memory[i] = Register[i - IndexCounter];
+  uint8_t x = (OperationCode & 0x0F00) >> 8u;
+  for (uint8_t i = 0; i <= x; ++i) {
+    Memory[IndexCounter + i] = Register[i];
   }
 }
 
 void Cpu::Op_FX65() {
-  uint8_t index1 = (OperationCode & 0x0F00) >> 8u;
-  for (uint16_t i = IndexCounter; i <= IndexCounter + index1; ++i) {
-    Register[i - IndexCounter] = Memory[i];
+  uint8_t x = (OperationCode & 0x0F00) >> 8u;
+  for (uint8_t i = 0; i <= x; ++i) {
+    Register[i] = Memory[IndexCounter + i];
   }
 }
 
-void Cpu::Op_NULL() { std::cout << "invalid Opcode"; };
+void Cpu::Op_NULL() {}
 
 void Cpu::Cycle() {
-  // Fetch
   uint16_t Temporary = Memory[ProgramCounter];
   OperationCode = (Temporary << 8u) | Memory[ProgramCounter + 1];
 
@@ -309,11 +320,26 @@ void Cpu::Cycle() {
   Op Operation =
       OperationArray[(OperationCode >> 12) & 0xF][(OperationCode >> 8) & 0xF]
                     [(OperationCode >> 4) & 0xF][OperationCode & 0xF];
-
   (this->*Operation)();
 
   // Decrement the delay timer if it's been set
   if (DelayTimer > 0) {
     --DelayTimer;
+  }
+}
+
+void Cpu::LoadRom(std::string file) {
+  std::ifstream filestream(file, std::ios::binary | std::ios::ate);
+  if (filestream.is_open()) {
+    std::streampos size = filestream.tellg();
+    std::vector<uint8_t> Buffer(size);
+    filestream.seekg(0);
+    filestream.read(reinterpret_cast<char *>(Buffer.data()), size);
+    filestream.close();
+    uint16_t Iterator = START_ADDRESS;
+    for (auto it : Buffer) {
+      Memory[Iterator] = it;
+      ++Iterator;
+    }
   }
 }

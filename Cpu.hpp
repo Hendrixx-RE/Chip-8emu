@@ -1,19 +1,21 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <string>
 #include <vector>
 class Cpu {
 public:
   Cpu();
-  std::vector<uint8_t> Memory, Register, Opstack, Keypad,
-      CharacterSet;                           // 4096,16,16
+  std::vector<uint8_t> Memory, Register, Keypad,
+      CharacterSet; // 4096,16,16
+  std::vector<uint16_t> Opstack;
   std::vector<std::vector<uint32_t>> Display; // 64x32
   uint16_t IndexCounter, ProgramCounter, OperationCode;
   uint8_t DelayTimer, StackPointer;
+  bool drawFlag;
   using Op = void (Cpu::*)(void);
   using opArray =
       std::array<std::array<std::array<std::array<Op, 16>, 16>, 16>, 16>;
-  static constexpr opArray makeOpTable();
   // Clears the screen
   void Op_00E0();
 
@@ -111,6 +113,9 @@ public:
   // set index+=Register[x]
   void Op_FX1E();
 
+  // set the font
+  void Op_FX29();
+
   // store bcd rep of Register[x] in IndexCounter,IndexCounter+1 and
   // IndexCounter+2
   void Op_FX33();
@@ -124,23 +129,25 @@ public:
   void Op_NULL();
 
   void Cycle();
+
+  void LoadRom(std::string file);
 };
 
-// Compile time oparray generator
 inline constexpr Cpu::opArray makeOpTable() {
   Cpu::opArray t{}; // value-initialized
-
   // 1. Default everything to illegal
   for (auto &dim1 : t) {
     for (auto &dim2 : dim1) {
       for (auto &dim3 : dim2) {
-        dim3.fill(&Cpu::Op_NULL); // Fills the final 16-element array safely
+        for (auto &dim4 : dim3) {
+          dim4 = &Cpu::Op_NULL;
+        }
       }
     }
   }
 
   // 2. 00E0, 00EE
-  t[0x0][0x0][0xE][0x0] = &Cpu::Op_00EE;
+  t[0x0][0x0][0xE][0x0] = &Cpu::Op_00E0;
   t[0x0][0x0][0xE][0xE] = &Cpu::Op_00EE;
 
   // 3. 1NNN, 2NNN, ANNN, BNNN
@@ -203,12 +210,11 @@ inline constexpr Cpu::opArray makeOpTable() {
     t[0xF][x][0x0][0xA] = &Cpu::Op_FX0A;
     t[0xF][x][0x1][0x5] = &Cpu::Op_FX15;
     t[0xF][x][0x1][0xE] = &Cpu::Op_FX1E;
+    t[0xF][x][0x2][0x9] = &Cpu::Op_FX29;
     t[0xF][x][0x3][0x3] = &Cpu::Op_FX33;
     t[0xF][x][0x5][0x5] = &Cpu::Op_FX55;
     t[0xF][x][0x6][0x5] = &Cpu::Op_FX65;
   }
-
-  t[0][0][0][0] = &Cpu::Op_NULL;
   return t;
 }
-constexpr Cpu::opArray OperationArray = makeOpTable();
+inline constexpr Cpu::opArray OperationArray = makeOpTable();
