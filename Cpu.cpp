@@ -25,7 +25,9 @@ Cpu::Cpu()
           0xF0, 0x80, 0xF0, 0x80, 0x80  // F
       }),
       Display(HEIGHT, std::vector<uint32_t>(WIDTH, 0x00000000)),
-      ProgramCounter(START_ADDRESS), StackPointer(0), OperationCode(0) {};
+      ProgramCounter(START_ADDRESS), StackPointer(0), OperationCode(0) {
+  LoadCharacters();
+};
 
 void Cpu::Op_00E0() {
   for (auto &row : Display) {
