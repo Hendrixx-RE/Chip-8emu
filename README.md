@@ -26,5 +26,6 @@ cd build
 ```bash
 ./Chip8 {game delay in ms (2)} {game name as in /roms folder}
 ```
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/8fecdbe1-4863-4b37-9ba1-765cb669f086" />
-
+<p align="center">
+  <img src="./output(online-video-cutter.com).gif" width="600px" alt="Emulator Demo">
+</p>
