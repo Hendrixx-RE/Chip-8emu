@@ -1,5 +1,5 @@
-#include "Cpu.hpp"
-#include "inputOutput.hpp"
+#include "../includes/Cpu.hpp"
+#include "../includes/inputOutput.hpp"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -13,13 +13,11 @@ int main(int argc, char **argv) {
   cycleDelay = std::stoi(argv[1]);
   Platform platform;
   Cpu chip8;
-  std::string romPath = std::string("./roms/") + argv[2] + ".ch8";
+  std::string romPath = std::string("../roms/") + argv[2];
   chip8.LoadRom(romPath);
   using clock = std::chrono::high_resolution_clock;
   using ms = std::chrono::duration<float, std::milli>;
   auto lastCycleTime = clock::now();
-  auto lastTimerTime = clock::now();
-
   while (true) {
     if (platform.ProcessInput(chip8.Keypad)) {
       break;

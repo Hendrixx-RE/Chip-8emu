@@ -1,5 +1,5 @@
-#include "Cpu.hpp"
-#include "Constants.hpp"
+#include "../includes/Cpu.hpp"
+#include "../includes/Constants.hpp"
 #include <fstream>
 #include <iostream>
 #include <random>

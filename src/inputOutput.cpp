@@ -1,4 +1,4 @@
-#include "inputOutput.hpp"
+#include "../includes/inputOutput.hpp"
 
 Platform::Platform() {
   struct notcurses_options nopts = {.flags = 0};
@@ -23,8 +23,8 @@ Platform::Platform() {
   ncplane_perimeter_double(border_plane, 0, channels, 0);
   struct ncplane_options gopts = {.y = start_y,
                                   .x = start_x,
-                                  .rows = uint32_t(game_rows),
-                                  .cols = uint32_t(game_cols)};
+                                  .rows = static_cast<uint32_t>(game_rows),
+                                  .cols = static_cast<uint32_t>(game_cols)};
   game_plane = ncplane_create(stdp, &gopts);
 }
 
