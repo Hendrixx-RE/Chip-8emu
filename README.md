@@ -26,4 +26,4 @@ cd build
 ```bash
 ./Chip8 {game delay in ms (2)} {game name as in /roms folder}
 ```
-![Demo](./output (online-video-cutter.com).gif)
+![Demo](./demo.gif)
