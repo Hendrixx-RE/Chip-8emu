@@ -26,5 +26,5 @@ cd build
 ```bash
 ./Chip8 {game delay in ms (2)} {game name as in /roms folder}
 ```
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/8fecdbe1-4863-4b37-9ba1-765cb669f086" />
 
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/fd9393b3-1a62-4f65-a087-01953c7db3af" />
