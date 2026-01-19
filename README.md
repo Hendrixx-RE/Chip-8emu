@@ -24,6 +24,6 @@ cd build
 ```
 ### Running
 ```bash
-./Chip8 {game delay in ms (2)} {game name as in /roms folder}
+./Chip8 {game delay in ms (2)} {rom location relative to the game folder}
 ```
 ![Demo](./demo.gif)

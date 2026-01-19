@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   IPF = std::stoi(argv[1]);
   Platform platform;
   Cpu chip8;
-  std::string romPath = std::string("../roms/") + argv[2];
+  std::string romPath = argv[2];
   chip8.LoadRom(romPath);
   auto next_frame = std::chrono::steady_clock::now();
   const std::chrono::microseconds frame_duration(16667);
