@@ -5,30 +5,30 @@
 #include <thread>
 
 int main(int argc, char **argv) {
-  int cycleDelay;
+  int IPF;
   if (argc < 3) {
     std::cerr << "Usage: " << argv[0] << "<Delay> <ROM>\n";
     std::exit(EXIT_FAILURE);
   }
-  cycleDelay = std::stoi(argv[1]);
+  IPF = std::stoi(argv[1]);
   Platform platform;
   Cpu chip8;
   std::string romPath = std::string("../roms/") + argv[2];
   chip8.LoadRom(romPath);
-  using clock = std::chrono::high_resolution_clock;
-  using ms = std::chrono::duration<float, std::milli>;
-  auto lastCycleTime = clock::now();
+  auto next_frame = std::chrono::steady_clock::now();
+  const std::chrono::microseconds frame_duration(16667);
   while (true) {
+    next_frame += frame_duration;
     if (platform.ProcessInput(chip8.Keypad)) {
       break;
     }
-    auto now = clock::now();
-    float cycleDt = std::chrono::duration_cast<ms>(now - lastCycleTime).count();
-    if (cycleDt >= cycleDelay) {
-      chip8.Cycle();
-      platform.Update(chip8.Display);
-      lastCycleTime = now;
+    if (chip8.DelayTimer > 0) {
+      --chip8.DelayTimer;
     }
-    std::this_thread::yield();
+    for (int i = 0; i < IPF; ++i) {
+      chip8.Cycle();
+    }
+    platform.Update(chip8.Display);
+    std::this_thread::sleep_until(next_frame);
   }
 }

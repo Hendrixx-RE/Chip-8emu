@@ -323,11 +323,6 @@ void Cpu::Cycle() {
       OperationArray[(OperationCode >> 12) & 0xF][(OperationCode >> 8) & 0xF]
                     [(OperationCode >> 4) & 0xF][OperationCode & 0xF];
   (this->*Operation)();
-
-  // Decrement the delay timer if it's been set
-  if (DelayTimer > 0) {
-    --DelayTimer;
-  }
 }
 
 void Cpu::LoadRom(std::string file) {

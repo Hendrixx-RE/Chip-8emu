@@ -9,13 +9,15 @@ Platform::Platform() {
   unsigned term_rows, term_cols;
   ncplane_dim_yx(stdp, &term_rows, &term_cols);
   int game_rows = 16;
-  int game_cols = 32;
+  int game_cols = 64;
   int start_y = (term_rows - game_rows) / 2;
   int start_x = (term_cols - game_cols) / 2;
-  struct ncplane_options bopts = {.y = start_y - 1,
-                                  .x = start_x - 1,
-                                  .rows = static_cast<uint32_t>(game_rows + 2),
-                                  .cols = static_cast<uint32_t>(game_cols + 2)};
+  struct ncplane_options bopts = {
+      .y = start_y - 1,
+      .x = start_x - 1,
+      .rows = static_cast<uint32_t>(game_rows + 2),
+      .cols = static_cast<uint32_t>(game_cols + 2),
+  };
   border_plane = ncplane_create(stdp, &bopts);
   uint64_t channels = 0;
   ncchannels_set_fg_rgb8(&channels, 0, 255, 0);
@@ -28,7 +30,7 @@ Platform::Platform() {
   game_plane = ncplane_create(stdp, &gopts);
 }
 
-Platform::~Platform() { notcurses_stop(nc); };
+Platform::~Platform() { notcurses_stop(nc); }
 
 void Platform::Update(const std::vector<std::vector<uint32_t>> &display) {
   static std::vector<uint32_t> flat_buffer(64 * 32);
@@ -40,7 +42,7 @@ void Platform::Update(const std::vector<std::vector<uint32_t>> &display) {
   struct ncvisual *ncv = ncvisual_from_rgba(flat_buffer.data(), 32, 64 * 4, 64);
   if (ncv) {
     struct ncvisual_options vopts = {.n = game_plane,
-                                     .blitter = NCBLIT_2x2,
+                                     .blitter = NCBLIT_2x1,
                                      .flags = NCVISUAL_OPTION_NODEGRADE};
     ncvisual_blit(nc, ncv, &vopts);
     ncvisual_destroy(ncv);
