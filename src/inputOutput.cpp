@@ -20,7 +20,7 @@ Platform::Platform() {
   };
   border_plane = ncplane_create(stdp, &bopts);
   uint64_t channels = 0;
-  ncchannels_set_fg_rgb8(&channels, 0, 255, 0);
+  ncchannels_set_fg_rgb8(&channels, 152, 151, 26);
   ncplane_set_base(border_plane, " ", 0, channels);
   ncplane_perimeter_double(border_plane, 0, channels, 0);
   struct ncplane_options gopts = {.y = start_y,
@@ -36,7 +36,7 @@ void Platform::Update(const std::vector<std::vector<uint32_t>> &display) {
   static std::vector<uint32_t> flat_buffer(64 * 32);
   for (int y = 0; y < 32; ++y) {
     for (int x = 0; x < 64; ++x) {
-      flat_buffer[y * 64 + x] = (display[y][x] != 0) ? 0xFF00FF00 : 0x00000000;
+      flat_buffer[y * 64 + x] = (display[y][x] != 0) ? 0xFF1A9798 : 0x00000000;
     }
   }
   struct ncvisual *ncv = ncvisual_from_rgba(flat_buffer.data(), 32, 64 * 4, 64);

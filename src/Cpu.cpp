@@ -163,27 +163,37 @@ void Cpu::Op_8XY4() {
 void Cpu::Op_8XY5() {
   uint16_t index1 = (OperationCode & 0x0F00) >> 8u;
   uint16_t index2 = (OperationCode & 0x00F0) >> 4u;
-  Register[index1] > Register[index2] ? Register[0xF] = 1 : Register[0xF] = 0;
+  uint8_t x = Register[index1];
+  uint8_t y = Register[index2];
   Register[index1] -= Register[index2];
+  x >= y ? Register[0xF] = 1 : Register[0xF] = 0;
 }
 
 void Cpu::Op_8XY6() {
   uint16_t index1 = (OperationCode & 0x0F00) >> 8u;
-  Register[0xF] = Register[index1] & 1u;
-  Register[index1] >>= 1;
+  uint16_t index2 = (OperationCode & 0x00F0) >> 4u;
+  uint8_t x = Register[index1];
+  uint8_t y = Register[index2];
+  Register[index1] = y >> 1;
+  Register[0xF] = x & 1u;
 }
 
 void Cpu::Op_8XY7() {
   uint16_t index1 = (OperationCode & 0x0F00) >> 8u;
   uint16_t index2 = (OperationCode & 0x00F0) >> 4u;
-  Register[index2] > Register[index1] ? Register[0xF] = 1 : Register[0xF] = 0;
+  uint8_t x = Register[index1];
+  uint8_t y = Register[index2];
   Register[index1] = Register[index2] - Register[index1];
+  y >= x ? Register[0xF] = 1 : Register[0xF] = 0;
 }
 
 void Cpu::Op_8XYE() {
   uint16_t index1 = (OperationCode & 0x0F00) >> 8u;
-  Register[0xF] = Register[index1] & 1u;
-  Register[index1] <<= 1;
+  uint16_t index2 = (OperationCode & 0x00F0) >> 4u;
+  uint8_t x = Register[index1];
+  uint8_t y = Register[index2];
+  Register[index1] = y << 1;
+  Register[0xF] = x >> 7;
 }
 
 void Cpu::Op_9XY0() {
