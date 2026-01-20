@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/Chip8.dir/link.d CMakeFiles/Chip8.dir/src/main.cpp.o CMakeFiles/Chip8.dir/src/inputOutput.cpp.o CMakeFiles/Chip8.dir/src/Cpu.cpp.o -o Chip8  /usr/lib/libnotcurses.so /usr/lib/libnotcurses-core.so

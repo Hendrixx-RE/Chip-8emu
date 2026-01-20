@@ -1,3 +1,0 @@
-/home/hendrixx/projects/cpp/chip8/build/CMakeFiles/Chip8.dir
-/home/hendrixx/projects/cpp/chip8/build/CMakeFiles/edit_cache.dir
-/home/hendrixx/projects/cpp/chip8/build/CMakeFiles/rebuild_cache.dir
